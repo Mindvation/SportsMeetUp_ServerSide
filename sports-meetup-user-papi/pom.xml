@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sports.meetup</groupId>
-	<artifactId>meetup-user-sapi</artifactId>
+	<artifactId>meetup-user-papi</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>sports-meetup-user-sapi</name>
+	<name>sports-meetup-user-papi</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>

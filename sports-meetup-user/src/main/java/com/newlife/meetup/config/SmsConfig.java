@@ -1,4 +1,4 @@
-package com.newlife.meetup.domain;
+package com.newlife.meetup.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
