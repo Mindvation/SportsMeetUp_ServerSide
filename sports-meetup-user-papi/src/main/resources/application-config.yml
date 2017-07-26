@@ -1,0 +1,4 @@
+sapi:
+  config: 
+    url: http://localhost:8082/sports-meetup-sapi/users/getUser
+  
