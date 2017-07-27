@@ -29,10 +29,6 @@ public class SmsConfig {
 	
 	private String timeout_value;
 	
-	private String soureces;
-	
-	private Integer size;
-
 	public String getSignName() {
 		return signName;
 	}
@@ -120,21 +116,4 @@ public class SmsConfig {
 	public void setTimeout_value(String timeout_value) {
 		this.timeout_value = timeout_value;
 	}
-
-	public String getSoureces() {
-		return soureces;
-	}
-
-	public void setSoureces(String soureces) {
-		this.soureces = soureces;
-	}
-
-	public Integer getSize() {
-		return size;
-	}
-
-	public void setSize(Integer size) {
-		this.size = size;
-	}
-	
 }

@@ -1,5 +1,8 @@
 package com.sports.meetup.user.utils;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CustomResponse {
 	private static final String SUCCESS_CODE = "OK";
 	private static final String SUCCESS_MESSAGE = "SUCCESS";

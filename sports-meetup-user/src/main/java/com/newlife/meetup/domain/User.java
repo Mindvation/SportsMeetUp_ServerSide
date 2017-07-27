@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 public class User {
@@ -13,7 +13,7 @@ public class User {
 	@GeneratedValue
 	private Long userId;
 	
-	@NotBlank(message="手机号不能为空") 
+	@Length(min=11, max=11, message="请输入正确的手机号.")
 	private String phoneNumber;
 	
 	private String verificationCode;

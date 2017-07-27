@@ -1,5 +1,6 @@
 package com.sports.meetup.user.domain;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
@@ -8,11 +9,14 @@ public class User {
 	
 	private Long userId;
 	
-	@NotBlank(message="手机号不能为空") 
+	@Length(min=11, max=11, message="请正确输入手机号.")
 	private String phoneNumber;
 	
+	@NotBlank(message="请输入正确的验证码.")
+	@Length(min=6,max=6, message="请输入正确的验证码.")
 	private String verificationCode;
 	
+	@NotBlank(message="密码不能为空.")
 	private String password;
 	
 	

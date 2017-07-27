@@ -1,6 +1,8 @@
 package com.newlife.meetup.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,10 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 
+	@Autowired
+	private ResponseUtil responseUtil;
+	
+	
 	/**
 	 * verify the phoneNumber when a user is trying to register with the phoneNumber
 	 * @param phoneNumber
@@ -37,8 +43,14 @@ public class UserController {
 	 */
 	//add User
 	@PostMapping("/addUser")
-	public ResponseUtil addUser(@RequestBody User user) {
+	public ResponseUtil addUser(@RequestBody @Validated User user, BindingResult bindResult) {
+		if(bindResult.hasErrors()) {
+			responseUtil.setMessage(bindResult.getAllErrors().get(0).getDefaultMessage());
+			responseUtil.setResponseCode("RE002");
+			return responseUtil;
+		}
 		return this.userService.addUser(user);
+//		return responseUtil;
 	}
 	
 }

@@ -12,9 +12,10 @@ public class SportsMeetupUserPapiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SportsMeetupUserPapiApplication.class, args);
 	}
+
 	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder restBuilder) {
-		return restBuilder.build();
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+	   // Do any additional configuration here
+	   return builder.build();
 	}
-	
 }
