@@ -63,7 +63,7 @@ public class SendSmsServiceImpl implements ISendSmsService {
 			try {
 				result = sendSms(phoneNumber, verificationCode).getCode();
 				if(result.equals("OK")) {
-					responseUtil.setResponseCode("SS100");
+					responseUtil.setResponseCode("000");
 					responseUtil.setMessage("验证码已发送.");
 					//更新checkCode数据
 					updateCheckCode(phoneNumber, checkCode);

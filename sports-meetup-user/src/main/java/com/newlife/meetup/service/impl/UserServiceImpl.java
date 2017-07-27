@@ -80,7 +80,7 @@ public class UserServiceImpl implements IUserService {
 				checkCode.setIsUsed(true);
 				checkCode.setUsingAt(new Timestamp(System.currentTimeMillis()));
 				this.checkCodeRepository.save(checkCode);
-				responseUtil.setResponseCode("RS100");
+				responseUtil.setResponseCode("000");
 				responseUtil.setMessage("注册成功！");
 				
 			}
