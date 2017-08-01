@@ -1,5 +1,6 @@
 package com.sports.meetup.user.web;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,6 @@ import com.sports.meetup.user.service.IUserService;
 
 @RestController
 @RequestMapping({"/users", "/v1.0/users"})
-/*@RequestMapping({"/sports-meetup-sapi/users", "/sports-meetup/users/v1.0"})*/
 public class UserController {
 	
 	@Autowired
