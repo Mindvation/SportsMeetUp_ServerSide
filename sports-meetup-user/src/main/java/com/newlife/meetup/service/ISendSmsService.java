@@ -9,5 +9,7 @@ import com.newlife.meetup.util.ResponseUtil;
 public interface ISendSmsService {
 
 	ResponseUtil getVerificationCode(String phoneNumber);
+
+	ResponseUtil getVerificationCode(String phoneNumber, int flag) throws ClientException;
 	
 }

@@ -1,4 +1,4 @@
-package com.sports.meetup.user.exception;
+/*package com.sports.meetup.user.exception;
 
 public class BadRequestException extends Exception {
 private String responseCode;
@@ -33,4 +33,4 @@ private String responseCode;
 	public void setMessage(String message) {
 		this.message = message;
 	}
-}
+}*/

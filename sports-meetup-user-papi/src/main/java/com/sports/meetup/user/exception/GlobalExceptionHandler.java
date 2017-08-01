@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import com.sports.meetup.user.constant.ConstantFields;
+import com.sports.common.constant.ConstantFields;
+import com.sports.common.domain.ApiDefaultResponse;
+import com.sports.common.exception.BadRequestException;
+import com.sports.common.exception.LoginException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,20 +35,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = { NoHandlerFoundException.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiDefaultResponse noHandlerFoundException(Exception ex) {
-        return new ApiDefaultResponse("404", ex.getMessage(), null);
+        return new ApiDefaultResponse(ConstantFields.getNotFoundCode(), ConstantFields.getNotFoundMsg(), null);
     }
 
     
-    @ExceptionHandler(value = { LoginFaildException.class })
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiDefaultResponse userNotExistException(LoginFaildException ex) {
-    	return new ApiDefaultResponse("503", ex.getMessage(), null);
+    @ExceptionHandler(value = { LoginException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiDefaultResponse loginFaildException(LoginException ex) {
+    	return new ApiDefaultResponse(ex.getErrorCode(), ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = { Exception.class })
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiDefaultResponse unknownException(Exception ex) {
-    	String message = ex.getMessage();
         return new ApiDefaultResponse("RUNTIME_500", "SAPI异常", null);
     }
 }

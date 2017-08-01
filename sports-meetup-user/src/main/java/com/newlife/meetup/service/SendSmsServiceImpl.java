@@ -45,6 +45,51 @@ public class SendSmsServiceImpl implements ISendSmsService {
 	private CheckCodeRepository checkCodeRepository;
 	
 	/**
+	 * 修改/忘记密码获取验证码
+   	 *4.1 校验用户是否已注册
+   	 *4.2 发送验证码
+     *4.2.1 生成验证码
+     *4.2.2 更新验证码
+     *4.2.3 发送验证码给平台
+	 * @param phoneNumber
+	 * @param flag
+	 * @return
+	 * @throws ClientException
+	 */
+	/*@Override
+	public ResponseUtil getVerificationCode(String phoneNumber, String flag) throws ClientException {
+		if(flag.equals("F")) {
+//			1. 校验用户是否已注册 checkPhoneNumber(phoneNumber) "Y" 用户存在 
+			String isUsed = userService.checkPhoneNumber(phoneNumber);
+			if(isUsed.equals("N")) {
+				LOG.error("用户不存在."); 
+				responseUtil.setResponseCode(ConstantFields.getLoginError501Code());
+				responseUtil.setMessage(ConstantFields.getLoginError501Msg());
+				return responseUtil;
+			}
+//			2.1 生成验证码
+			checkCode = generateVerificationCode(phoneNumber);
+			String verificationCode = checkCode.getCode();
+			if(LOG.isDebugEnabled()) {
+				LOG.debug("the generated verificatgionCode is {}", verificationCode);
+			}
+//			2.2 更新验证码
+			updateCheckCode(phoneNumber, checkCode);
+//			2.3 发送验证码给平台
+			String result = sendSms(phoneNumber, verificationCode).getCode();
+			if(result.equals("OK")) {
+				responseUtil.setResponseCode("000");
+				responseUtil.setMessage("验证码已发送.");
+			}else {
+				responseUtil.setResponseCode("SS001");
+				responseUtil.setMessage("验证码发送失败, 请重试.");
+			}
+		}
+			
+		return responseUtil;
+	}*/
+	
+	/**
 	 * 用户获取验证码：
 	 * 1. 校验手机号
 	 * 2. 请求短信平台发送验证码给用户端
@@ -52,14 +97,22 @@ public class SendSmsServiceImpl implements ISendSmsService {
 	@Override
 	@Transactional
 	public ResponseUtil getVerificationCode(String phoneNumber) {
-		String isUsable = userService.checkPhoneNumber(phoneNumber);
+		String isUsed = userService.checkPhoneNumber(phoneNumber);
+		if(isUsed.equals("Y")) {
+			responseUtil.setResponseCode("SE100");
+			responseUtil.setMessage("账户已经存在.");
+		}
 		String result = "";
 		checkCode = generateVerificationCode(phoneNumber);
 		String verificationCode = checkCode.getCode();
 		if(LOG.isDebugEnabled()) {
 			LOG.debug("the generated verificatgionCode is {}", verificationCode);
 		}
-		if(isUsable.equals("Y")) {
+		if(isUsed.equals("Y")) {
+			responseUtil.setResponseCode("SE100");
+			responseUtil.setMessage("账户已经存在.");
+		}
+		if(isUsed.equals("N")) {
 			try {
 				result = sendSms(phoneNumber, verificationCode).getCode();
 				if(result.equals("OK")) {
@@ -77,10 +130,7 @@ public class SendSmsServiceImpl implements ISendSmsService {
 				e.printStackTrace();
 			}
 		}
-		if(isUsable.equals("N")) {
-			responseUtil.setResponseCode("SE100");
-			responseUtil.setMessage("账户已经存在.");
-		}
+	
 		
 		return responseUtil;
 	}
@@ -169,6 +219,8 @@ public class SendSmsServiceImpl implements ISendSmsService {
 	      
         return sendSmsResponse;
 	}
+
+	
 
 
 }

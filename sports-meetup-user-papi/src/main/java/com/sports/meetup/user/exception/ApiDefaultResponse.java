@@ -1,4 +1,4 @@
-package com.sports.meetup.user.exception;
+/*package com.sports.meetup.user.exception;
 
 public class ApiDefaultResponse {
 	
@@ -34,3 +34,4 @@ public class ApiDefaultResponse {
 	
 	
 }
+*/

@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringConfig {
 	
-	private String url;
+	private String findUserByPhoneNumberUrl;
 
-	public String getUrl() {
-		return url;
+	public String getFindUserByPhoneNumberUrl() {
+		return findUserByPhoneNumberUrl;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setFindUserByPhoneNumberUrl(String findUserByPhoneNumberUrl) {
+		this.findUserByPhoneNumberUrl = findUserByPhoneNumberUrl;
 	}
 
 }

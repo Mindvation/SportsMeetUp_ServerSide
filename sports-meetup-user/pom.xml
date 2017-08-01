@@ -79,6 +79,13 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- sports meetup common dependency -->
+		<dependency>
+			<groupId>com.sports.meetup</groupId>
+			<artifactId>sports-meetup-common</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

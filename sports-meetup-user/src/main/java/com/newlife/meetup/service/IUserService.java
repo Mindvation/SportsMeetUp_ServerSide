@@ -18,4 +18,6 @@ public interface IUserService {
 
 	String checkPhoneNumber(String phoneNumber);
 
+	ResponseUtil updatePassword(User user);
+
 }

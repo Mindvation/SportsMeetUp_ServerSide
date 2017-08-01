@@ -12,57 +12,59 @@ import org.springframework.transaction.annotation.Transactional;
 import com.newlife.meetup.domain.CheckCode;
 import com.newlife.meetup.domain.User;
 import com.newlife.meetup.repository.CheckCodeRepository;
-import com.newlife.meetup.repository.UserRepository;
+import com.newlife.meetup.repository.UserJpaRepository;
 import com.newlife.meetup.service.IUserService;
+import com.newlife.meetup.util.EncryptionUtil;
 import com.newlife.meetup.util.ResponseUtil;
 
 @Service
 public class UserServiceImpl implements IUserService {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+	private final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserJpaRepository userJpaRepository;
 	
 	@Autowired
 	private ResponseUtil responseUtil;
 	
 	@Autowired
 	private CheckCodeRepository checkCodeRepository;
+
 	
 	@Autowired
 	private CheckCode checkCode;
 	
 	//valid phoneNumber
 	/**
-	 * N means the number is used.
-	 * Y means the number is usable.
+	 * Y means the number is used.
+	 * N means the number is not used.
 	 */
 	@Override
 	public String checkPhoneNumber(String phoneNumber) {
-		String isUsable = "N";
+		String isUsed = "N";
 		try {
 //			 number = this.phoneNumberRepositery.findPhoneNumberByNumber(phoneNumber);
-			 List<User> users = this.userRepository.findUserByPhoneNumber(phoneNumber);
+			 List<User> users = this.userJpaRepository.findUserByPhoneNumber(phoneNumber);
 			 if(users.size()>0) {
-				 isUsable = "N";
+				 isUsed = "Y";
 			 }else {
-				 isUsable = "Y";
+				 isUsed = "N";
 			 }
 		}catch (Exception e) {
-			LOGGER.debug("Some issue occurred while running method checkUser()");
+			LOG.debug("Some issue occurred while running method checkUser()");
 		}
-		return isUsable;
+		return isUsed;
 	}
 	
 	//addUser 
 	@Override
 	@Transactional
 	public ResponseUtil addUser(User user) {
-		String isUsable = checkPhoneNumber(user.getPhoneNumber());
-		 if(isUsable.equals("N")) {
-			 responseUtil.setResponseCode("RE001");
-			 responseUtil.setMessage("账户已经存在！");
+		String isUsed = checkPhoneNumber(user.getPhoneNumber());
+		 if(isUsed.equals("Y")) {
+			 responseUtil.setResponseCode("USER_ERROR_503");
+			 responseUtil.setMessage("用户已存在.");
 			 return responseUtil;
 		 }
 //		 2 校验用户验证码
@@ -70,16 +72,17 @@ public class UserServiceImpl implements IUserService {
 		 if(passed.equals("N")) {
 			 //跟新checkCode数据以用过
 			 checkCodeRepository.saveAndFlush(checkCode);
-			 responseUtil.setResponseCode("SS001");
-			 responseUtil.setMessage("验证码已失效, 请重试获取验证码.");
+			 responseUtil.setResponseCode("USER_ERROR_505");
+			 responseUtil.setMessage("验证码已失效,请重新获取.");
 			 return responseUtil;
 		 }
 		try {
-			if(isUsable.equals("Y")&&passed.equals("Y")) {
-				this.userRepository.save(user);
+			if(isUsed.equals("N")&&passed.equals("Y")) {
+				user.setPassword(EncryptionUtil.getEncryptString(user.getPassword()));
+				this.userJpaRepository.save(user);
 				checkCode.setIsUsed(true);
 				checkCode.setUsingAt(new Timestamp(System.currentTimeMillis()));
-				this.checkCodeRepository.save(checkCode);
+				this.checkCodeRepository.saveAndFlush(checkCode);
 				responseUtil.setResponseCode("000");
 				responseUtil.setMessage("注册成功！");
 				
@@ -90,14 +93,65 @@ public class UserServiceImpl implements IUserService {
 		return responseUtil;
 	}
 	
-	 //2 校验用户验证码
+	/*
+	 * 更新密码
+	 * 1. 校验用户是否存在
+	 * 2.校验验证码
+	 * 3.更新数据库
+	 * (non-Javadoc)
+	 * @see com.newlife.meetup.service.IUserService#updatePassword(com.newlife.meetup.domain.User)
+	 */
+	@Override
+	@Transactional
+	public ResponseUtil updatePassword(User user) {
+		 List<User> users = this.userJpaRepository.findUserByPhoneNumber(user.getPhoneNumber());
+		 if(users.size()==0) {
+			 LOG.error("========= 用户未注册 ========");
+			 responseUtil.setResponseCode("USER_ERROR_501");
+			 responseUtil.setMessage("用户不存在,请注册.");
+			 return responseUtil;
+		 }
+//		1. 校验用户是否存在
+		String isUsed = checkPhoneNumber(user.getPhoneNumber());
+		 if(isUsed.equals("N")) {
+			 LOG.error("========= 用户未注册 ========");
+			 responseUtil.setResponseCode("USER_ERROR_501");
+			 responseUtil.setMessage("用户不存在,请注册.");
+			 return responseUtil;
+		 }
+
+//		 校验密码
+		 if(EncryptionUtil.getEncryptString(user.getPassword()).equals(users.get(0).getPassword())) {
+			 LOG.error("密码和旧密码重复.");
+			 responseUtil.setResponseCode("USER_ERROR_506");
+			 responseUtil.setMessage("新旧密码不能相同.");
+			 return responseUtil;
+		 }
+//		 2.校验验证码
+		 String passed = checkVerificationCode(user);
+		 if(passed.equals("N")) {
+			 //跟新checkCode数据以用过
+			 responseUtil.setResponseCode("USER_ERROR_505");
+			 responseUtil.setMessage("验证码已失效,请重新获取.");
+			 return responseUtil;
+		 }
+		 
+//		 3.更新数据库()
+		 if(isUsed.equals("Y")&&passed.equals("Y")) {
+			this.userJpaRepository.delete(users.get(0));
+			this.userJpaRepository.save(user);
+					responseUtil.setResponseCode("000");
+					responseUtil.setMessage("请求成功!");
+			}
+		return responseUtil;
+	}
+	 //校验用户验证码
 		@Transactional
 		public String checkVerificationCode(User user) {
 			String result = "N";
 			String verificationCode = "";
 			try {
 				checkCode = checkCodeRepository.findOne(user.getPhoneNumber());
-//				checkCodeRepository.updateCheckCode(checkCode.set);
 				if(checkCode == null) {
 					return result;
 				}
@@ -106,12 +160,12 @@ public class UserServiceImpl implements IUserService {
 					return result;
 				}
 				if(checkCode.getExpireAt().before(new Timestamp(System.currentTimeMillis()))) {
+					return result;
+				}
+				if (EncryptionUtil.getEncryptString(user.getVerificationCode()).equals(verificationCode)) {
 					checkCode.setUsingAt(new Timestamp(System.currentTimeMillis()));
 					checkCode.setIsUsed(true);
 					checkCodeRepository.saveAndFlush(checkCode);
-					return result;
-				}
-				if (user.getVerificationCode().equals(verificationCode)) {
 					result = "Y";
 				}
 			}catch (Exception e) {
@@ -122,6 +176,7 @@ public class UserServiceImpl implements IUserService {
 			return result;
 		}
 	
+		
 	@Override
 	public String checkUser(User user) {
 		User user2 = findUserByPhoneNumber(user.getPhoneNumber());
@@ -133,7 +188,7 @@ public class UserServiceImpl implements IUserService {
 	}
 	
 	public User findUserByPhoneNumber(String phoneNumber){
-		List<User> users = this.userRepository.findUserByPhoneNumber(phoneNumber);
+		List<User> users = this.userJpaRepository.findUserByPhoneNumber(phoneNumber);
 		if(users.size()!=0) {
 			return users.get(0);
 		}else {
@@ -152,5 +207,7 @@ public class UserServiceImpl implements IUserService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 	
 }

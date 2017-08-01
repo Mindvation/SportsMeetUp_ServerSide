@@ -12,3 +12,4 @@ sms:
   connect_timeout_key: sun.net.client.defaultConnectTimeout
   read_timeout_key: sun.net.client.defaultReadTimeout
   timeout_value: 1800000
+  bizId: JX001

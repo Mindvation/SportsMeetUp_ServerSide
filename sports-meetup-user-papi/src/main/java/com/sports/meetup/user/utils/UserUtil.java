@@ -16,7 +16,8 @@ public class UserUtil {
 			LOG.error("======== 登录用户名不存在 ========");
 			return result;
 		}
-		if(loginUser.getPassword().equals(dbUser.getPassword())) {
+		String loginPassword = EncryptionUtil.getEncryptString(loginUser.getPassword());
+		if(loginPassword.equals(dbUser.getPassword())) {
 			result="Y";
 		}else {
 			LOG.error("======== 登录密码错误 ========");

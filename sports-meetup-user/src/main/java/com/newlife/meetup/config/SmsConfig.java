@@ -29,6 +29,17 @@ public class SmsConfig {
 	
 	private String timeout_value;
 	
+	private String bizId;
+	
+	
+	public String getBizId() {
+		return bizId;
+	}
+
+	public void setBizId(String bizId) {
+		this.bizId = bizId;
+	}
+
 	public String getSignName() {
 		return signName;
 	}

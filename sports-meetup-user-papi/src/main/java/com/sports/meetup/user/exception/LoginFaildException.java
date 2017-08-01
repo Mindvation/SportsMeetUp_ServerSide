@@ -1,4 +1,4 @@
-package com.sports.meetup.user.exception;
+/*package com.sports.meetup.user.exception;
 
 public class LoginFaildException extends Exception {
 	
@@ -31,3 +31,4 @@ public class LoginFaildException extends Exception {
 	
 	
 }
+*/
