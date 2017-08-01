@@ -18,9 +18,16 @@ public class ConstantFields {
 	private final static String USER_ERROR505_MSG = "验证码已失效,请重新获取.";
 	private final static String USER_ERROR506_CODE = "USER_ERROR_506";
 	private final static String USER_ERROR506_MSG = "新旧密码不能相同.";
+	private final static String USER_ERROR507_CODE = "USER_ERROR_507";
+	private final static String USER_ERROR507_MSG = "用户账户异常.";
 	
 	
-	
+	public static String getUserError507Code() {
+		return USER_ERROR507_CODE;
+	}
+	public static String getUserError507Msg() {
+		return USER_ERROR507_MSG;
+	}
 	public static String getUserError506Code() {
 		return USER_ERROR506_CODE;
 	}
