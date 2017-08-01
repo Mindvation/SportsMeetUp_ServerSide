@@ -1,0 +1,15 @@
+sms: 
+  signName: 觉醒网络
+  templateCode: SMS_78715030
+  accessKeyId: LTAIbgwdMyssRQ9b
+  accessKeySecret: ymul3kms49xvVsByEiZWu7KIBkj0tn
+  
+  product: Dysmsapi
+  domain: dysmsapi.aliyuncs.com
+  regionId: cn-hangzhou 
+  endpointName: cn-hangzhou
+    
+  connect_timeout_key: sun.net.client.defaultConnectTimeout
+  read_timeout_key: sun.net.client.defaultReadTimeout
+  timeout_value: 1800000
+  bizId: JX001
